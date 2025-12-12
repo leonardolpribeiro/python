@@ -1,6 +1,7 @@
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt, IntPrompt
+from rich.table import Table
 import json
 from pathlib import Path
 DATA_FILE = Path("tasks.json")
@@ -37,12 +38,18 @@ def show_menu():
 def list_tasks():
     if not tasks:
         console.print("[dim italic]📭 Nenhuma tarefa ainda...[/]")
-    else:
-        console.print("\n[bold cyan]📝 Suas tarefas:[/bold cyan]")
-        for task in tasks:
-            status = "✅" if task["done"] else "⏳"
-            console.print(f"  {status} [bold]{task['id']}:[/bold] {task['title']}")
-
+        return
+    table = Table(title="Suas Tarefas", box=None) # box=None deixa mais "clean"
+    
+    table.add_column("ID", style="cyan", no_wrap=True)
+    table.add_column("Título", style="magenta")
+    table.add_column("Status", style="green", justify="center")    
+    
+    for task in tasks:
+            status = "✅ Concluída" if task["done"] else "⏳ Pendente"
+            table.add_row(str(task["id"]), task["title"], status)
+            
+    console.print(table)
 
 # Programa principal
 show_banner()
@@ -56,7 +63,7 @@ while True:
         title = Prompt.ask("📝 Novo título")
         tasks.append({"id": len(tasks)+1, "title": title, "done": False})
         save_tasks()
-        console.print("[green bold]✅ Tarefa salva![/]")
+        console.print("[bold green]✅ Tarefa salva com sucesso![/bold green]")
     elif choice == 3:
         list_tasks()
         if tasks:
@@ -65,10 +72,10 @@ while True:
                 if task["id"] == task_id:
                     task["done"] = True
                     save_tasks()
-                    console.print("[green bold]🎉 Concluída![/]")
+                    console.print("[bold green]🎉 Tarefa Concluída![/bold green]")
                     break
             else:
-                console.print("[red]❌ ID não encontrado[/]")
+                console.print("[bold red]❌ ID não encontrado.[/bold red]")
     elif choice == 4:
         console.print("[bold blue]👋 Tchau![/]")
         break

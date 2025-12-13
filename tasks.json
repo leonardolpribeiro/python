@@ -12,6 +12,11 @@
   {
     "id": 3,
     "title": "Listagem em tabela Rich e melhorias de UX",
-    "done": false
+    "done": true
+  },
+  {
+    "id": 4,
+    "title": "Editar e remover tarefas",
+    "done": true
   }
 ]

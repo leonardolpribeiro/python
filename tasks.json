@@ -18,5 +18,10 @@
     "id": 4,
     "title": "Editar e remover tarefas",
     "done": true
+  },
+  {
+    "id": 5,
+    "title": "Busca e filtro por status",
+    "done": true
   }
 ]

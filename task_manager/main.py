@@ -35,7 +35,9 @@ def show_menu():
     console.print("[3] Concluir tarefa")
     console.print("[4] Editar tarefa")
     console.print("[5] Remover tarefa")
-    console.print("[6] Sair", style= "red")
+    console.print("[6] Buscar tarefa")
+    console.print("[7] Filtrar por status")
+    console.print("[8] Sair", style= "red")
 
 def list_tasks():
     if not tasks:
@@ -75,12 +77,61 @@ def remove_task():
             console.print("[bold green]🗑️  Tarefa removida![/bold green]")
             return
     console.print("[bold red]❌ Tarefa não encontrada")
+    
+def buscar_task():
+    """ Busca de tarefas por palavra-chave"""
+    keyword = Prompt.ask("🔍 Digite a palavra-chave para buscar").lower()
+    
+    results = [task for task in tasks if keyword in task["title"].lower()]
+    
+    if not results:
+        console.print(f"[dim italic]📭 Nenhuma tarefa encontrada com a palavra-chave: {keyword}.[/] ")
+        return
+    table = Table(title=f"Resultados da busca: '{keyword}'", box=None)
+    table.add_column("ID", style="cyan", no_wrap=True)
+    table.add_column("Título", style="magenta")
+    table.add_column("Status", style="green", justify="center")
+    
+    for task in results:
+        status = "✅ Concluída" if task["done"] else "⏳ Pendente"
+        table.add_row(str(task["id"]), task ["title"], status)
+        console.print(table)
+        
+def filtrar_status():
+    """"Filtrar tarefas por status (pendente ou concluída)"""
+    console.print("\n[bold cyan]Filtrar por status:[/bold cyan]")
+    console.print("[1] Pendentes")
+    console.print("[2] Concluídas")
+    
+    choice = IntPrompt.ask("Escolha", choices=["1", "2"])
+    
+    if choice == 1:
+        filtrado = [task for task in tasks if not task["done"]]
+        status_nome = "Pendente"
+    else:
+        filtrado = [task for task in tasks if task["done"]]
+        status_nome = "Concluída"
+        
+    if not filtrado:
+        console.print(f"[dim italic]📭 Nenhuma tarefa {status_nome.lower()}[/]")
+        return
+    
+    table = Table(title=f"Tarefas {status_nome}", box=None)
+    table.add_column("ID", style="cyan", no_wrap=True)
+    table.add_column("Título", style="magenta")
+    table.add_column("Status", style="green", justify="center")
+    
+    for task in filtrado:
+        status="✅ Concluída" if task["done"] else "⏳ Pendente"
+        table.add_row(str(task["id"]), task["title"], status)
+    
+    console.print(table)
 
 # Programa principal
 show_banner()
 while True:
     show_menu()
-    choice = IntPrompt.ask("Escolha", choices=["1", "2", "3", "4", "5", "6"])
+    choice = IntPrompt.ask("Escolha", choices=["1", "2", "3", "4", "5", "6", "7", "8"])
     
     if choice == 1:
         list_tasks()
@@ -106,8 +157,14 @@ while True:
         
     elif choice == 5:
         remove_task()
-    
+        
     elif choice == 6:
+        buscar_task()
+        
+    elif choice == 7:
+        filtrar_status()
+    
+    elif choice == 8:
         console.print("[bold blue]👋 Tchau![/]")
         break
     
